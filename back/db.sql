@@ -4,16 +4,11 @@ CREATE TABLE admin (
     email VARCHAR(250),
     mdp VARCHAR(250) 
 );
-// db.js
-const { Pool } = require("pg");
 
-const pool = new Pool({
-  host: "localhost",
-  user: "postgres",
-  password: "password",
-  database: "ma_base",
-  port: 5432
-});
 
-module.exports = pool;
-
+CREATE TABLE client (
+    client_id SERIAL PRIMARY KEY,
+    nom_prenom VARCHAR(255),
+    adresse VARCHAR(255),
+    admine_id INT REFERENCES admine(admine_id)
+);

@@ -13,6 +13,8 @@ import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles'
+import { useNavigate } from "react-router-dom";
+import Swal from 'sweetalert2';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -41,7 +43,7 @@ const SignUpContainer = styled(Stack)(({ theme }) => ({
     padding: theme.spacing(4),
   },
   '&::before': {
-    content: '""', 
+    content: '""',
     display: 'block',
     position: 'absolute',
     zIndex: -1,
@@ -56,54 +58,12 @@ const SignUpContainer = styled(Stack)(({ theme }) => ({
   },
 }));
 
-export default function Login() {
-  const [emailError, setEmailError] = React.useState(false);
-  const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
-  const [passwordError, setPasswordError] = React.useState(false);
-  const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
-  const [nameError, setNameError] = React.useState(false);
-  const [nameErrorMessage, setNameErrorMessage] = React.useState('');
+export default function Login({ setIsConeter }: any) {
 
-  const validateInputs = () => {
-    const email = document.getElementById('email');
-    const password = document.getElementById('password');
-    const name = document.getElementById('name');
 
-    let isValid = true;
-
-    // if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
-    //   setEmailError(true);
-    //   setEmailErrorMessage('Please enter a valid email address.');
-    //   isValid = false;
-    // } else {
-    //   setEmailError(false);
-    //   setEmailErrorMessage('');
-    // }
-
-    // if (!password.value || password.value.length < 6) {
-    //   setPasswordError(true);
-    //   setPasswordErrorMessage('Password must be at least 6 characters long.');
-    //   isValid = false;
-    // } else {
-    //   setPasswordError(false);
-    //   setPasswordErrorMessage('');
-    // }
-
-    // if (!name.value || name.value.length < 1) {
-    //   setNameError(true);
-    //   setNameErrorMessage('Name is required.');
-    //   isValid = false;
-    // } else {
-    //   setNameError(false);
-    //   setNameErrorMessage('');
-    // }
-
-    return isValid;
-  };
-
-   const [mdp, setMdp] = React.useState('');
-   const [email, setEmail] = React.useState('');
-  const CreationCompte = () => {
+  const [mdp, setMdp] = React.useState('');
+  const [email, setEmail] = React.useState('');
+  const LoginFunction = () => {
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -114,9 +74,26 @@ export default function Login() {
     };
     fetch('http://localhost:3000/login-admine', requestOptions)
       .then(response => response.json())
-      .then(data => console.log("Login admine"));
+      .then(data => {
+        if (data.length > 0) {
+          Swal.fire({
+            title: "Conexions reusi!",
+            icon: "success",
+            draggable: true
+          });
+          setIsConeter(true)
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Something went wrong!",
+          });
+        }
+
+      });
   }
 
+  
 
   return (
     <>
@@ -130,12 +107,12 @@ export default function Login() {
           >
             Login
           </Typography>
-          
-             <Box
+
+          <Box
             component="form"
             sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
           >
-            
+
             <FormControl>
               <FormLabel htmlFor="email">Email</FormLabel>
               <TextField
@@ -146,9 +123,6 @@ export default function Login() {
                 name="email"
                 autoComplete="email"
                 variant="outlined"
-                error={emailError}
-                helperText={emailErrorMessage}
-                color={passwordError ? 'error' : 'primary'}
                 onChange={(e) => {
                   setEmail(e.target.value)
                 }
@@ -166,21 +140,18 @@ export default function Login() {
                 id="password"
                 autoComplete="new-password"
                 variant="outlined"
-                error={passwordError}
-                helperText={passwordErrorMessage}
-                color={passwordError ? 'error' : 'primary'}
-                 onChange={(e) => {
+                onChange={(e) => {
                   setMdp(e.target.value)
                 }
                 }
               />
             </FormControl>
-            
+
             <Button
               // type="submit"
               fullWidth
               variant="contained"
-             onClick={CreationCompte}
+              onClick={LoginFunction}
             >
               Login
             </Button>
@@ -189,7 +160,7 @@ export default function Login() {
             <Typography sx={{ color: 'text.secondary' }}>or</Typography>
           </Divider>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            
+
             <Typography sx={{ textAlign: 'center' }}>
               Create an account?{' '}
               <Link
@@ -197,7 +168,7 @@ export default function Login() {
                 variant="body2"
                 sx={{ alignSelf: 'center' }}
               >
-               
+
 
                 Creation Compte
               </Link>

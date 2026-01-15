@@ -41,9 +41,25 @@ WHERE email = '${email}'
     res.json(data.rows)
 });
 
+
+app.post("/post-admine", async (req, res) => {
+    const { nom, email, mdp } = req.body;
+    console.log(nom)
+    const sql = `INSERT INTO admin (nom, email, mdp) VALUES ('${nom}', '${email}', '${mdp}') RETURNING  * `
+    const data = await client.query(sql)
+    res.json(data.rows)
+});
+// // put // delete
+// login 
+app.post("/login-admine", async (req, res) => {
+    const { email, mdp } = req.body;
+    const sql = `SELECT * FROM admin
+WHERE email = '${email}'
+  AND mdp = '${mdp}'`
+    const data = await client.query(sql)
+    res.json(data.rows)
+});
+
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
 })
-
-
-
