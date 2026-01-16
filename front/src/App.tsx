@@ -12,14 +12,14 @@ export default function App() {
 
   return (
       <>
-        {
+        {/* {
           !isConeter ? signUp ? (
             <CreationCompte signUp={signUp} setSignUp={setSignUp} />
           ) : (
             <Login {... {setIsConeter}}/>
-          ) :
+          ) : */}
             <AlRoute />
-        }
+        {/* // } */}
       </>
   );
 }

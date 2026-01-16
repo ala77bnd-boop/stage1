@@ -10,5 +10,6 @@ CREATE TABLE client (
     client_id SERIAL PRIMARY KEY,
     nom_prenom VARCHAR(255),
     adresse VARCHAR(255),
-    admine_id INT REFERENCES admine(admine_id)
+    admine_id Serial REFERENCES admin(id)
 );
+

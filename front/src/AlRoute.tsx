@@ -6,12 +6,14 @@ export default function AlRoute() {
     return (
         <>
             <BrowserRouter>
-            <ResponsiveDrawer/> 
-                <Routes>
-                    <Route path="/" element={<h1>welcomphdezaqxcvbne</h1>} />
-                    <Route path="/client" element={<Client/>} />
+                <ResponsiveDrawer />
+                <div style={{ marginLeft: 240 }}>
+                    <Routes>
+                        <Route path="/" element={<h1>welcomphdezaqxcvbne</h1>} />
+                        <Route path="/client" element={<Client />} />
 
-                </Routes>
+                    </Routes>
+                </div>
             </BrowserRouter></>
     )
 }

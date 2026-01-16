@@ -52,17 +52,29 @@ export default function ResponsiveDrawer(props: Props) {
             <Toolbar />
             <Divider />
             <List>
-                    <ListItem  component={Link} to="/client" >
-                        <ListItemButton>
-                            <ListItemIcon>
-                                <MailIcon />
-                            </ListItemIcon>
-                            <ListItemText primary={"Client"} />
-                        </ListItemButton>
-                    </ListItem>
+                <ListItem component={Link} to="/client" >
+                    <ListItemButton>
+                        <ListItemIcon>
+                            <MailIcon />
+                        </ListItemIcon>
+                        <ListItemText primary={"Client"} />
+                    </ListItemButton>
+                </ListItem>
             </List>
             <Divider />
             
+            
+            <ListItem disablePadding>
+                <ListItemButton
+                    component={Link}
+                    to="/commande"
+                >
+                    <ListItemIcon>
+                        <MailIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Commande" />
+                </ListItemButton>
+            </ListItem>
         </div>
     );
 
