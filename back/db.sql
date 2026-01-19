@@ -13,3 +13,10 @@ CREATE TABLE client (
     admine_id Serial REFERENCES admin(id)
 );
 
+CREATE TABLE produit (
+    produit_id SERIAL PRIMARY KEY,
+    nom VARCHAR(250),
+    image VARCHAR(250),
+    prix VARCHAR(250),
+    admine_id INT REFERENCES admin(admine_id)
+);

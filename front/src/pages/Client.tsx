@@ -1,11 +1,8 @@
-
-
 import * as React from "react";
-import FormControl from '@mui/material/FormControl';
-
 import {
     Box,
     Button,
+    FormControl,
     FormLabel,
     Modal,
     Paper,
@@ -16,184 +13,219 @@ import {
     TableHead,
     TableRow,
     TextField,
-    Typography,
 } from "@mui/material";
 import Swal from "sweetalert2";
 
+/* =======================
+   TYPE
+======================= */
 interface Client {
-    nom: string;
-    email: string;
+    id: number;
+    nom_prenom: string;
     adresse: string;
     admine_id: number;
 }
+
+/* =======================
+   MODAL STYLE
+======================= */
 const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
     width: 400,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
+    bgcolor: "background.paper",
     boxShadow: 24,
-    pt: 2,
-    px: 4,
-    pb: 3,
+    p: 4,
 };
+
+/* =======================
+   COMPONENT
+======================= */
 export default function Client() {
-    const [showTable, setShowTable] = React.useState(false);
+
+    /* ---------- STATES ---------- */
     const [clients, setClients] = React.useState<Client[]>([]);
+    const [refresh, setRefresh] = React.useState(false);
 
-    // 1️⃣ Charger depuis localStorage
-    //   const loadClients = () => {
-    //     const data = localStorage.getItem("clients");
-    //     if (data) {
-    //       setClients(JSON.parse(data));
-    //     }
-    //     setShowTable(true);
-    //   };
+    const [openAdd, setOpenAdd] = React.useState(false);
+    const [openEdit, setOpenEdit] = React.useState(false);
 
-    // 2️⃣ Initialisation (comme ton exemple myCat)
+    const [currentClient, setCurrentClient] = React.useState<Client | null>(null);
+
+    const [nomPrenom, setNomPrenom] = React.useState("");
+    const [adresse, setAdresse] = React.useState("");
+
+    /* ---------- LOAD CLIENTS ---------- */
     React.useEffect(() => {
-        fetch('http://localhost:3000/get-client')
-            .then(response => response.json())
+        fetch("http://localhost:3000/get-client")
+            .then(res => res.json())
             .then(data => setClients(data));
-    }, []);
+    }, [refresh]);
 
-    // 3️⃣ Supprimer un client
-    //   const deleteClient = (index: number) => {
-    //     const updated = clients.filter((_, i) => i !== index);
-    //     setClients(updated);
-    //     localStorage.setItem("clients", JSON.stringify(updated));
-    //   };
-    const [open, setOpen] = React.useState(false);
-    const handleOpen = () => {
-        setOpen(true);
-    };
-    const handleClose = () => {
-        setOpen(false);
-    };
-
-    const [NometPrenom, setNometPrenom] = React.useState('');
-    const [adresse, setadresse] = React.useState('');
-    const AddFunction = () => {
-        const requestOptions = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+    /* ---------- ADD CLIENT ---------- */
+    const addClient = () => {
+        fetch("http://localhost:3000/post-client", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                nom_prenom: NometPrenom,
+                nom_prenom: nomPrenom,
                 adresse: adresse,
-                admine_id: 1
-            })
-        };
-        fetch('http://localhost:3000/post-client', requestOptions)
-            .then(response => response.json())
-            .then(data => {
-                Swal.fire({
-                    title: "New Client a ete ajouté avec suces!",
-                    icon: "success",
-                    draggable: true
-                });
-                handleClose()
-                //   setIsConeter(true)
-
+                admine_id: 1,
+            }),
+        })
+            .then(() => {
+                setRefresh(prev => !prev);
+                Swal.fire("Client ajouté", "", "success");
+                setOpenAdd(false);
+                setNomPrenom("");
+                setAdresse("");
             });
-    }
+    };
+
+    /* ---------- DELETE CLIENT (FIX FINAL) ---------- */
+    const deleteClient = (id: number) => {
+
+                // ✅ suppression immédiate en front
+                setClients(prev => prev.filter(c => c.id !== id));
+
+                fetch(`http://localhost:3000/delete-client/${id}`, {
+                    method: "DELETE",
+                })
+                    .then(() => {
+                        setRefresh(prev => !prev); // resync backend
+                        Swal.fire("Supprimé", "Le client a été supprimé", "success");
+                    });
+        
+    };
+
+    /* ---------- OPEN EDIT ---------- */
+    const openEditModal = (client: Client) => {
+        setCurrentClient(client);
+        setNomPrenom(client.nom_prenom);
+        setAdresse(client.adresse);
+        setOpenEdit(true);
+    };
+
+    /* ---------- UPDATE CLIENT ---------- */
+    const updateClient = () => {
+
+        fetch(`http://localhost:3000/update-client/${currentClient!.id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                nom_prenom: nomPrenom,
+                adresse: adresse,
+            }),
+        })
+            .then(() => {
+                setRefresh(prev => !prev);
+                Swal.fire("Client modifié", "", "success");
+                setOpenEdit(false);
+            });
+    };
+
+    /* =======================
+       RENDER
+    ======================= */
     return (
         <Box sx={{ p: 3 }}>
 
-            <Box sx={{ display: "flex", justifyContent: "center", mt: -35, ml: 130, backgroundColor: "red", }}>
-                <Button variant="contained"
-                    onClick={handleOpen}
-                >
-                    Ajouter client
-                </Button>
-                <Modal
-                    open={open}
-                    onClose={handleClose}
-                    aria-labelledby="parent-modal-title"
-                    aria-describedby="parent-modal-description"
-                >
-                    <Box sx={{ ...style, width: 400 }}>
-                        <h2 id="parent-modal-title">Ajouter client</h2>
-                        <FormControl>
-                            <FormLabel htmlFor="email">Nom et prenom</FormLabel>
-                            <TextField
-                                required
-                                fullWidth
-                                id="email"
-                                placeholder="nom et prenom"
-                                name="email"
-                                autoComplete="email"
-                                variant="outlined"
-                                onChange={(e) => {
-                                    setNometPrenom(e.target.value)
-                                }
-                                }
-                            />
-                        </FormControl>
-                        <FormControl>
-                            <FormLabel htmlFor="password">adresse</FormLabel>
-                            <TextField
-                                required
-                                fullWidth
-                                name="password"
-                                placeholder="adresse"
-                                id="password"
-                                autoComplete="new-password"
-                                variant="outlined"
-                                onChange={(e) => {
-                                    setadresse(e.target.value)
-                                }
-                                }
-                            />
-                        </FormControl>
-                        <Button
-                            // type="submit"
-                            fullWidth
-                            variant="contained"
-                            onClick={AddFunction}
-                            sx={{ mt: 3 }}
-                        >
-                            Ajouter
-                        </Button>
-                    </Box>
-                </Modal>
-            </Box>
+            <Button variant="contained" onClick={() => setOpenAdd(true)}>
+                Ajouter client
+            </Button>
 
-            <TableContainer component={Paper} sx={{ mt: 5 }}>
+            <Modal open={openAdd} onClose={() => setOpenAdd(false)}>
+                <Box sx={style}>
+                    <h2>Ajouter client</h2>
+
+                    <FormControl fullWidth sx={{ mb: 2 }}>
+                        <FormLabel>Nom et prénom</FormLabel>
+                        <TextField
+                            value={nomPrenom}
+                            onChange={e => setNomPrenom(e.target.value)}
+                        />
+                    </FormControl>
+
+                    <FormControl fullWidth>
+                        <FormLabel>Adresse</FormLabel>
+                        <TextField
+                            value={adresse}
+                            onChange={e => setAdresse(e.target.value)}
+                        />
+                    </FormControl>
+
+                    <Button fullWidth sx={{ mt: 2 }} variant="contained" onClick={addClient}>
+                        Ajouter
+                    </Button>
+                </Box>
+            </Modal>
+
+            <Modal open={openEdit} onClose={() => setOpenEdit(false)}>
+                <Box sx={style}>
+                    <h2>Modifier client</h2>
+
+                    <FormControl fullWidth sx={{ mb: 2 }}>
+                        <FormLabel>Nom et prénom</FormLabel>
+                        <TextField
+                            value={nomPrenom}
+                            onChange={e => setNomPrenom(e.target.value)}
+                        />
+                    </FormControl>
+
+                    <FormControl fullWidth>
+                        <FormLabel>Adresse</FormLabel>
+                        <TextField
+                            value={adresse}
+                            onChange={e => setAdresse(e.target.value)}
+                        />
+                    </FormControl>
+
+                    <Button fullWidth sx={{ mt: 2 }} variant="contained" onClick={updateClient}>
+                        Modifier
+                    </Button>
+                </Box>
+            </Modal>
+
+            <TableContainer component={Paper} sx={{ mt: 4 }}>
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell>nom et prenom</TableCell>
-                            <TableCell>adresse</TableCell>
-                            <TableCell>admine id</TableCell>
-                            <TableCell align="center">Action</TableCell>
+                            <TableCell>Nom et prénom</TableCell>
+                            <TableCell>Adresse</TableCell>
+                            <TableCell>Admin ID</TableCell>
+                            <TableCell align="center">Actions</TableCell>
                         </TableRow>
                     </TableHead>
 
                     <TableBody>
-                        {clients.map((client: any, index) => (
-                            <TableRow key={index}>
+                        {clients.map(client => (
+                            <TableRow key={client.id}>
                                 <TableCell>{client.nom_prenom}</TableCell>
                                 <TableCell>{client.adresse}</TableCell>
                                 <TableCell>{client.admine_id}</TableCell>
                                 <TableCell align="center">
                                     <Button
-                                        variant="contained"
-                                        color="error"
                                         size="small"
                                         sx={{ mr: 1 }}
-                                    //   onClick={() => deleteClient(index)}
+                                        variant="contained"
+                                        onClick={() => openEditModal(client)}
+                                    >
+                                        Edit
+                                    </Button>
+                                    <Button
+                                        size="small"
+                                        color="error"
+                                        variant="contained"
+                                        onClick={() => deleteClient(client.id)}
                                     >
                                         Delete
-                                    </Button>
-                                    <Button variant="contained" size="small">
-                                        Edit
                                     </Button>
                                 </TableCell>
                             </TableRow>
                         ))}
-                    </TableBody>
+                    </TableBody>    
                 </Table>
             </TableContainer>
         </Box>

@@ -9,7 +9,7 @@ export default function AlRoute() {
                 <ResponsiveDrawer />
                 <div style={{ marginLeft: 240 }}>
                     <Routes>
-                        <Route path="/" element={<h1>welcomphdezaqxcvbne</h1>} />
+                        <Route path="/" element={<h1>Bienvenue {localStorage.getItem("NomAdmine")}</h1>} />
                         <Route path="/client" element={<Client />} />
 
                     </Routes>

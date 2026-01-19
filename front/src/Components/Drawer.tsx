@@ -67,12 +67,34 @@ export default function ResponsiveDrawer(props: Props) {
             <ListItem disablePadding>
                 <ListItemButton
                     component={Link}
+                    to="/prduits"
+                >
+                    <ListItemIcon>
+                        <MailIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Produits" />
+                </ListItemButton>
+            </ListItem>
+           <ListItem disablePadding>
+                <ListItemButton
+                    component={Link}
                     to="/commande"
                 >
                     <ListItemIcon>
                         <MailIcon />
                     </ListItemIcon>
                     <ListItemText primary="Commande" />
+                </ListItemButton>
+            </ListItem>
+             <ListItem disablePadding>
+                <ListItemButton
+                    component={Link}
+                    to="/historique"
+                >
+                    <ListItemIcon>
+                        <MailIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Historique" />
                 </ListItemButton>
             </ListItem>
         </div>

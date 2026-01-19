@@ -73,6 +73,9 @@ export default function Login({ setIsConeter }: any) {
       .then(response => response.json())
       .then(data => {
         if (data.length > 0) {
+          localStorage.setItem("admine_id",data[0].id)
+          localStorage.setItem("NomAdmine",data[0].nom)
+
           Swal.fire({
             title: "Conexions reusi!",
             icon: "success",
