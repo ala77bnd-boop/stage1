@@ -19,10 +19,12 @@ export default function App() {
         !isConeter ? signUp ? (
           <CreationCompte signUp={signUp} setSignUp={setSignUp} />
         ) : (
-          <Login {... { setIsConeter }} />
+          <Login {... { setIsConeter }} /> 
         ) :
-          <AlRoute />
+          <AlRoute {...{setIsConeter}} /> // paasage d'un parametre
       }
     </>
   );
 }
+
+

@@ -11,27 +11,25 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import MailIcon from '@mui/icons-material/Mail';
+import PeopleIcon from '@mui/icons-material/People';
+import Inventory2Icon from '@mui/icons-material/Inventory2';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import HistoryIcon from '@mui/icons-material/History';
 import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import { AccountCircle } from '@mui/icons-material';
+import { Menu, MenuItem } from '@mui/material';
 
 const drawerWidth = 240;
 
-interface Props {
-    /**
-     * Injected by the documentation to work in an iframe.
-     * Remove this when copying and pasting into your project.
-     */
-    window?: () => Window;
-}
 
-export default function ResponsiveDrawer(props: Props) {
-    const { window } = props;
+
+export default function ResponsiveDrawer({ setIsConeter }: any) {
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const [isClosing, setIsClosing] = React.useState(false);
-
+    let location = useLocation()
     const handleDrawerClose = () => {
         setIsClosing(true);
         setMobileOpen(false);
@@ -52,57 +50,70 @@ export default function ResponsiveDrawer(props: Props) {
             <Toolbar />
             <Divider />
             <List>
-                <ListItem component={Link} to="/client" >
+                <ListItem component={Link} to="/client" className={location.pathname == "/client" ? "bg-slate-200" : undefined} >
                     <ListItemButton>
                         <ListItemIcon>
-                            <MailIcon />
+                            <PeopleIcon />
                         </ListItemIcon>
                         <ListItemText primary={"Client"} />
                     </ListItemButton>
                 </ListItem>
             </List>
             <Divider />
-            
-            
-            <ListItem disablePadding>
+
+
+            <ListItem component={Link}
+                to="/produits" className={location.pathname == "/produits" ? "bg-slate-200" : undefined}>
                 <ListItemButton
-                    component={Link}
-                    to="/prduits"
+
+
                 >
                     <ListItemIcon>
-                        <MailIcon />
+                        <Inventory2Icon />
                     </ListItemIcon>
                     <ListItemText primary="Produits" />
                 </ListItemButton>
             </ListItem>
-           <ListItem disablePadding>
+            <ListItem component={Link}
+                to="/commande" className={location.pathname == "/commande" ? "bg-slate-200" : undefined}>
                 <ListItemButton
-                    component={Link}
-                    to="/commande"
+
                 >
                     <ListItemIcon>
-                        <MailIcon />
+                        <ShoppingCartIcon />
                     </ListItemIcon>
                     <ListItemText primary="Commande" />
                 </ListItemButton>
             </ListItem>
-             <ListItem disablePadding>
+            <ListItem component={Link}
+                to="/History" className={location.pathname == "/History" ? "bg-slate-200" : undefined}>
                 <ListItemButton
-                    component={Link}
-                    to="/historique"
+
                 >
                     <ListItemIcon>
-                        <MailIcon />
+                        <HistoryIcon />
                     </ListItemIcon>
-                    <ListItemText primary="Historique" />
+                    <ListItemText primary="History" />
                 </ListItemButton>
             </ListItem>
         </div>
     );
 
     // Remove this const when copying and pasting into your project.
-    const container = window !== undefined ? () => window().document.body : undefined;
+    // const container = window !== undefined ? () => window().document.body : undefined;
+    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
 
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+    const handleDeconnexions = () => {
+        localStorage.clear()
+        setAnchorEl(null);
+        setIsConeter(false)
+    };
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
@@ -123,9 +134,22 @@ export default function ResponsiveDrawer(props: Props) {
                     >
                         <MenuIcon />
                     </IconButton>
-                    <Typography variant="h6" noWrap component="div">
+                    <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
                         Responsive drawer
                     </Typography>
+                    <>
+                        <IconButton color="inherit" onClick={handleMenu}>
+                            <AccountCircle />
+                        </IconButton>
+
+                        <Menu
+                            anchorEl={anchorEl}
+                            open={Boolean(anchorEl)}
+                            onClose={handleClose}
+                        >
+                            <MenuItem onClick={handleDeconnexions}>Deconnexions</MenuItem>
+                        </Menu>
+                    </>
                 </Toolbar>
             </AppBar>
             <Box
@@ -135,7 +159,7 @@ export default function ResponsiveDrawer(props: Props) {
             >
                 {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
                 <Drawer
-                    container={container}
+                    // container={container}
                     variant="temporary"
                     open={mobileOpen}
                     onTransitionEnd={handleDrawerTransitionEnd}

@@ -123,12 +123,7 @@ app.delete('/delete-client/:id', async (req, res) => {
 app.get('/get-produit', async (req, res) => {
     try {
         const data = await client.query(`
-            SELECT 
-                produit_id AS id,
-                nom,
-                image,
-                prix,
-                admine_id
+            SELECT *
             FROM produit
         `);
         res.json(data.rows);
@@ -169,19 +164,10 @@ app.put('/update-produit/:id', async (req, res) => {
             UPDATE produit
             SET nom = $1, image = $2, prix = $3
             WHERE produit_id = $4
-            RETURNING 
-                produit_id AS id,
-                nom,
-                image,
-                prix,
-                admine_id
+            RETURNING *
         `, [nom, image, prix, id]);
 
-        if (!data.rows[0]) {
-            return res.status(404).json({ error: 'Produit introuvable' });
-        }
-
-        res.json(data.rows[0]);
+        res.json(data.rows);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -195,7 +181,6 @@ app.delete('/delete-produit/:id', async (req, res) => {
         const data = await client.query(`
             DELETE FROM produit
             WHERE produit_id = $1
-            RETURNING produit_id AS id
         `, [id]);
 
         if (!data.rows[0]) {

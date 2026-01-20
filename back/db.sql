@@ -18,5 +18,5 @@ CREATE TABLE produit (
     nom VARCHAR(250),
     image VARCHAR(250),
     prix VARCHAR(250),
-    admine_id INT REFERENCES admin(admine_id)
-);
+    admine_id INT REFERENCES admin(id)
+)

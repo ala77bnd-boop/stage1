@@ -72,7 +72,7 @@ export default function Client() {
             body: JSON.stringify({
                 nom_prenom: nomPrenom,
                 adresse: adresse,
-                admine_id: 1,
+                admine_id: localStorage.getItem("admine_id"),
             }),
         })
             .then(() => {
