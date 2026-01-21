@@ -51,11 +51,7 @@ app.post('/login-admine', async (req, res) => {
 // GET clients ✅
 app.get('/get-client', async (req, res) => {
     const data = await client.query(`
-        SELECT 
-            client_id AS id,
-            nom_prenom,
-            adresse,
-            admine_id
+        SELECT *
         FROM client
     `);
     res.json(data.rows);
@@ -193,8 +189,17 @@ app.delete('/delete-produit/:id', async (req, res) => {
     }
 });
 
-
-
+/* ================== Commande ================== */
+app.post('/post-commande', async (req, res) => {
+    const { prix, nom, admine_id } = req.body;
+    const sql = `INSERT INTO commande (prix_total, nom_client, admine_id)
+            VALUES ($1, $2, $3)
+            RETURNING * `
+    const data = await client.query(sql, [prix, nom, admine_id])
+    return res.json(data.rows)
+}
+)
+// get 
 app.listen(port, () => {
     console.log(`Serveur lancé sur http://localhost:${port}`);
 });

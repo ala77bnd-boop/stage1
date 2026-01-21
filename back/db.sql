@@ -19,4 +19,12 @@ CREATE TABLE produit (
     image VARCHAR(250),
     prix VARCHAR(250),
     admine_id INT REFERENCES admin(id)
-)
+);
+
+CREATE TABLE Commande (
+    commande_id SERIAL PRIMARY KEY,
+    prix_total VARCHAR(250),
+    time TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    nom_client VARCHAR(250),
+    admine_id INTEGER REFERENCES admin(id)
+);
