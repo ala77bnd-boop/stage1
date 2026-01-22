@@ -1,95 +1,78 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Checkbox from '@mui/material/Checkbox';
 import CssBaseline from '@mui/material/CssBaseline';
 import Divider from '@mui/material/Divider';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import FormLabel from '@mui/material/FormLabel';
 import FormControl from '@mui/material/FormControl';
-import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import MuiCard from '@mui/material/Card';
-import { styled } from '@mui/material/styles'
-import Swal from 'sweetalert2'
-const Card = styled(MuiCard)(({ theme }) => ({
+import { styled } from '@mui/material/styles';
+import Swal from 'sweetalert2';
+import { useForm } from 'react-hook-form';
 
+const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
-  alignSelf: 'center',
   width: '100%',
   padding: theme.spacing(4),
   gap: theme.spacing(2),
-  margin: 'auto',
   boxShadow:
     'hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px',
   [theme.breakpoints.up('sm')]: {
     width: '450px',
   },
-  ...theme.applyStyles('dark', {
-    boxShadow:
-      'hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px',
-  }),
 }));
 
+// Container centré sur toute la page
 const SignUpContainer = styled(Stack)(({ theme }) => ({
-  height: 'calc((1 - var(--template-frame-height, 0)) * 100dvh)',
-  minHeight: '100%',
+  minHeight: '100vh',
+  display: 'flex',
+  justifyContent: 'center', // centre verticalement
+  alignItems: 'center',     // centre horizontalement
   padding: theme.spacing(2),
-  [theme.breakpoints.up('sm')]: {
-    padding: theme.spacing(4),
-  },
   '&::before': {
     content: '""',
-    display: 'block',
     position: 'absolute',
-    zIndex: -1,
     inset: 0,
+    zIndex: -1,
     backgroundImage:
       'radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))',
     backgroundRepeat: 'no-repeat',
-    ...theme.applyStyles('dark', {
-      backgroundImage:
-        'radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))',
-    }),
   },
 }));
 
 export default function CreationCompte({ signUp, setSignUp }: any) {
-  const [name, setName] = React.useState('');
-  const [mdp, setMdp] = React.useState('');
-  const [email, setEmail] = React.useState('');
-  const CreationCompte = () => {
+  const { register, handleSubmit, formState: { errors } } = useForm();
+
+  const CreationCompteFunction = (data: any) => {
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        nom: name,
-        email: email,
-        mdp: mdp
-      })
+        nom: data.name,
+        email: data.email,
+        mdp: data.password,
+      }),
     };
     fetch('http://localhost:3000/post-admine', requestOptions)
-      .then(response => response.json())
-      .then(data => {
+      .then((response) => response.json())
+      .then(() => {
         Swal.fire({
-          title: "Compte Ajoute avec succée!",
-          icon: "success",
-          draggable: true
+          title: 'Compte ajouté avec succès!',
+          icon: 'success',
+          draggable: true,
         });
-        setSignUp(!signUp)
+        setSignUp(!signUp);
       });
-  }
+  };
+
   return (
-    <>
+    <Box sx={{  width: '100%' ,ml :45}}>
       <CssBaseline enableColorScheme />
-      <SignUpContainer
-        direction="column"
-        justifyContent="center"
-        alignItems="center"
-      >
+      <SignUpContainer direction="column">
         <Card variant="outlined">
           <Typography
             component="h1"
@@ -101,93 +84,77 @@ export default function CreationCompte({ signUp, setSignUp }: any) {
 
           <Box
             component="form"
-            // onSubmit={handleSubmit}
             sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+            onSubmit={handleSubmit(CreationCompteFunction)}
           >
+            {/* NAME */}
             <FormControl>
               <FormLabel htmlFor="name">Full name</FormLabel>
               <TextField
-                autoComplete="name"
-                name="name"
-                required
                 fullWidth
                 id="name"
-                placeholder="Ala Ben Abdallah"
-                onChange={(e) => {
-                  console.log(e.target.value)
-                  setName(e.target.value)
-                }
-                }
+                placeholder="Name"
+                {...register("name", { required: "Name required" })}
+                error={!!errors.name}
+                helperText={errors.name ? String(errors.name.message) : ''}
               />
             </FormControl>
+
+            {/* EMAIL */}
             <FormControl>
               <FormLabel htmlFor="email">Email</FormLabel>
               <TextField
-                required
                 fullWidth
                 id="email"
                 placeholder="your@email.com"
-                name="email"
-                autoComplete="email"
-                variant="outlined"
-                onChange={(e) => {
-                  setEmail(e.target.value)
-                }
-                }
+                {...register("email", { required: "Email required" })}
+                error={!!errors.email}
+                helperText={errors.email ? String(errors.email.message) : ''}
               />
             </FormControl>
+
+            {/* PASSWORD */}
             <FormControl>
               <FormLabel htmlFor="password">Password</FormLabel>
               <TextField
-                required
                 fullWidth
-                name="password"
-                placeholder="••••••"
                 type="password"
                 id="password"
-                autoComplete="new-password"
-                variant="outlined"
-                onChange={(e) => {
-                  console.log(e.target.value)
-                  setMdp(e.target.value)
-                }
-                }
+                placeholder="••••••"
+                {...register("password", { required: "Password required" })}
+                error={!!errors.password}
+                helperText={errors.password ? String(errors.password.message) : ''}
               />
             </FormControl>
 
-            <Button
-              // type="submit"
-              fullWidth
-              variant="contained"
-              onClick={CreationCompte}
-            >
+            <Button type="submit" fullWidth variant="contained">
               Création Compte
             </Button>
           </Box>
+
           <Divider>
             <Typography sx={{ color: 'text.secondary' }}>or</Typography>
           </Divider>
+
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <Typography sx={{ textAlign: 'center' }}>
               Already have an account?{' '}
-
-
               <button
-                // href="/material-ui/getting-started/templates/sign-in/"
-                // variant="body2"
-                // sx={{ alignSelf: 'center' }}
-                onClick={() => {
-                  setSignUp(!signUp)
-                }
-                }
+                onClick={() => setSignUp(!signUp)}
+                style={{
+                  color: 'blue',
+                  textDecoration: 'underline',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                }}
               >
-
                 Sign in
               </button>
             </Typography>
           </Box>
         </Card>
       </SignUpContainer>
-    </>
+    </Box>
   );
 }

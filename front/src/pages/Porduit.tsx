@@ -58,7 +58,7 @@ export default function Produit() {
     React.useEffect(() => {
         const fetchProduits = async () => {
             try {
-                const response = await fetch("http://localhost:3000/get-produit");
+                const response = await fetch(`http://localhost:3000/get-produit/${localStorage.getItem("admine_id")}`);
                 if (!response.ok) throw new Error(`Erreur: ${response.status}`);
                 const data = await response.json();
                 setProduits(data);

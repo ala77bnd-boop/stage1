@@ -59,7 +59,7 @@ export default function Client() {
 
     /* ---------- LOAD CLIENTS ---------- */
     React.useEffect(() => {
-        fetch("http://localhost:3000/get-client")
+        fetch(`http://localhost:3000/get-client/${localStorage.getItem("admine_id")}`)
             .then(res => res.json())
             .then(data => setClients(data));
     }, [refresh]);

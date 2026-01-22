@@ -46,6 +46,13 @@ app.post('/login-admine', async (req, res) => {
     }
 });
 
+app.post("/post-admine", async (req, res) => {
+    const { nom, email, mdp } = req.body;
+    console.log(nom)
+    const sql = `INSERT INTO admin (nom, email, mdp) VALUES ('${nom}', '${email}', '${mdp}') RETURNING  * `
+    const data = await client.query(sql)
+    res.json(data.rows)
+});
 /* ================= CLIENT ================= */
 
 // GET clients ✅
@@ -53,6 +60,14 @@ app.get('/get-client', async (req, res) => {
     const data = await client.query(`
         SELECT *
         FROM client
+    `);
+    res.json(data.rows);
+});
+app.get('/get-client/:id', async (req, res) => {
+    const { id } = req.params
+    const data = await client.query(`
+        SELECT *
+        FROM client WHERE  admine_id =${id}
     `);
     res.json(data.rows);
 });
@@ -127,6 +142,18 @@ app.get('/get-produit', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+app.get('/get-produit/:id', async (req, res) => {
+    try {
+        const {id}= req.params
+        const data = await client.query(`
+            SELECT *
+            FROM produit WHERE  admine_id =${id}
+        `);
+        res.json(data.rows);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
 
 // POST créer un produit
 app.post('/post-produit', async (req, res) => {
@@ -188,6 +215,20 @@ app.delete('/delete-produit/:id', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+/* ================== GET COMMANDES ================== */
+app.get('/get-commande', async (req, res) => {
+    try {
+        const data = await client.query(`
+            SELECT *
+            FROM commande
+        `);
+        res.json(data.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
 
 /* ================== Commande ================== */
 app.post('/post-commande', async (req, res) => {

@@ -3,6 +3,7 @@ import ResponsiveDrawer from "./Components/Drawer";
 import Client from "./pages/Client";
 import Produit from "./pages/Porduit";
 import Commande from "./pages/Commande";
+import Historique from "./pages/Historique";
 
 export default function AlRoute({setIsConeter}:any) {
     return (
@@ -15,6 +16,7 @@ export default function AlRoute({setIsConeter}:any) {
                         <Route path="/client" element={<Client />} />
                          <Route path="/produits" element={<Produit />} />
                          <Route path="/commande" element={<Commande />} />
+                         <Route path="/History" element={<Historique />} />
                     </Routes>
                 </div>
             </BrowserRouter></>

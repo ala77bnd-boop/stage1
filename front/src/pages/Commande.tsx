@@ -33,6 +33,7 @@ interface PanierItem {
    COMPONENT
 ======================= */
 export default function Commande() {
+
     /* ---------- STATES ---------- */
     const [nomClient, setNomClient] = React.useState("");
     const [panier, setPanier] = React.useState<PanierItem[]>([]);
@@ -102,43 +103,55 @@ export default function Commande() {
     const removeFromPanier = (nom: string) => {
         setPanier(prev => prev.filter(p => p.nom !== nom));
     };
+
+    /* =======================
+       POST COMMANDE
+    ======================= */
     const PostNewCommande = () => {
-        if (nomClient.length == 0) {
+        if (nomClient.length === 0) {
             Swal.fire({
                 icon: "error",
                 title: "Oops...",
-                text: "IL faut selecetionner  un client",
+                text: "Il faut sélectionner un client",
             });
-        } else if (total == 0) {
+        }
+        else if (total === 0) {
             Swal.fire({
                 icon: "error",
                 title: "Oops...",
-                text: "IL faut passer au moins une commande ",
+                text: "Il faut passer au moins une commande",
             });
         }
         else {
             const requestOptions = {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     prix: total,
                     nom: nomClient,
                     admine_id: localStorage.getItem("admine_id")
                 })
             };
-            fetch('http://localhost:3000/post-commande', requestOptions)
+
+            fetch("http://localhost:3000/post-commande", requestOptions)
                 .then(response => response.json())
                 .then(data => {
-                    Swal.fire("New Commande a été ajouté", "", "success");
-                    setPanier([])
-                }
-                );
+                    Swal.fire(
+                        "New Commande a été ajoutée",
+                        "",
+                        "success"
+                    );
+                    setPanier([]);
+                });
         }
+    };
 
-    }
-
+    /* =======================
+       RENDER
+    ======================= */
     return (
         <Box display="flex" gap={4} p={4} alignItems="flex-start">
+
             {/* ================= PRODUITS ================= */}
             <Box
                 display="grid"
@@ -166,7 +179,7 @@ export default function Commande() {
                     </FormControl>
                 </Box>
 
-                {/* PIZZAS */}
+                {/* LISTE PRODUITS */}
                 {produits.map((p) => (
                     <Paper key={p.produit_id} sx={{ p: 2 }}>
                         <img
@@ -230,9 +243,11 @@ export default function Commande() {
                 <Box mt={2}>
                     <strong>Total : {total} €</strong>
                 </Box>
+
                 <Button
                     variant="contained"
-                    className="w-full"
+                    fullWidth
+                    sx={{ mt: 2 }}
                     onClick={PostNewCommande}
                 >
                     Commander
